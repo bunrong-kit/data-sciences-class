@@ -1,0 +1,101 @@
+---
+title: "Data Science Midterm Exam"
+output: html_notebook
+---
+
+```{r}
+# 1. Write code to generate 6x6 matrix for A, and B
+A <- matrix(sample(1:100), 6, 6)
+B <- matrix(sample(500:600), 6, 6)
+A
+B
+## a. Find Range of matrix A and B
+range(A)
+range(B)
+
+## b. Find the max value from each row from A and B
+for(i in range(1:6)){
+    x[i] = max(A[i,], na.rm = TRUE)
+    y[i] = max(B[i,], na.rm = TRUE)
+}
+x
+y
+
+## c. Find the diagonal values of matrices A&B
+diag(A)
+diag(B)
+
+## d. Multiply matrices A, B
+A%*%B
+
+## e. Replace 4th row of Matrix A with diagonal values of matrix B
+replace(A, A[4], diag(B))
+
+## f. Multiply matrices A & B and store the values on X
+X <- A%*%B
+
+## g. Divide the matrix A with matrix B
+A/B
+```
+
+```{r}
+# 2. Create table using dataframe
+library(tidyverse)
+df <- data.frame(name=c("mr a", "mr b", "mr c", "mr d", "mr e", "mr f", "mr g", "mr j", "mr i", "mr j"), 
+                 second_name=c("aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj"),
+                 age=c(18, 19, 20, 21, 22, 23, 21, 25, 23, 20), 
+                 occupation=c("student", "student","student","student","student","student","student","student","student","student"),
+                 place=c("phnom penh", "siem reap", "koah kong","phnom penh", "siem reap", "koah kong", "phnom penh", "siem reap", "koah kong", "takeo"),
+                 random_number = c(runif(1, min = 1, max=10)))
+df
+
+## a. Extract the last column
+df %>% select(random_number)
+## b. Find the sum, mean and length of extracted column
+df %>% mutate(Sum = sum(df$random_number), Mean = mean(df$random_number), Length = length(df$random_number))
+```
+
+```{r}
+# 4. Perform the following datasets
+### a. Import and clean dataset
+library(ggplot2)
+ds <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/covid-geography/mmsa-icu-beds.csv")
+ds
+names(ds) # get all name of variable
+dim(ds) # to see number of row and columns
+summary(ds) # view the summary statistic all column
+dss <- na.omit(ds) # there is 4 NA, remove those.
+sum(is.na(dss)) # verify NA still exists.
+
+### b. Find x and y variable and give the reason
+# I use the following data set in order to get the information of Covid-19 all around the world which include variables: 
+# - "MMSA"                   
+# - "total_percent_at_risk"  
+# - "high_risk_per_ICU_bed"  
+# - "high_risk_per_hospital" 
+# - "icu_beds"              
+# - "hospitals"              
+# - "total_at_risk"         
+# I choose X = "MMSA", and Y = "total_at_risk". I want to plot graph of which MMSA place that have the most high risk
+# all over the world. 
+dss %>% select(MMSA, total_at_risk)
+
+### c. Plot the graph using geom_col() and perform linear model in statistic
+gplt <- ggplot(dss, aes(x = MMSA, y = total_at_risk)) + geom_col(color = "grey", size = 6) + geom_smooth(method = "lm", formula = y ~ x)
+gplt
+
+### d. Perform the facet with available columns
+# Running this below code on my PC take alot of time.
+gplt + facet_grid(icu_beds ~ hospitals)
+
+### e. Perform the following
+### e.1 Axis title 
+gplt + 
+  ggtitle("Covid-19") +
+  xlab("MMSA") +
+  ylab("Number of Total Risk") +
+  theme_bw() + theme(axis.title.x = element_text(size = 10, face = "bold", color = "green", margin = margin(t=20)),
+                           axis.title.y = element_text(size = 10, face = "bold", color = "green", margin = margin(l=20)),
+                           plot.title = element_text(size = 25, face = "bold", color = "blue", hjust = .5))
+```
+
